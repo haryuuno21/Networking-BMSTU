@@ -1,0 +1,12 @@
+nav{
+    display: flex;
+    align-items: center;
+    height: 64px;
+    background-color: var(--navbar-bg-color);
+    border-bottom: 4px solid;
+    border-color: var(--navbar-border-color);
+}
+
+#title{
+    margin-left: 5px;
+}
