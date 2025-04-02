@@ -1,12 +1,18 @@
-nav{
-    display: flex;
-    align-items: center;
-    height: 64px;
-    background-color: var(--navbar-bg-color);
-    border-bottom: 4px solid;
-    border-color: var(--navbar-border-color);
+nav {
+  display: flex;
+  align-items: center;
+  height: 64px;
+  background-color: var(--navbar-bg-color);
+  border-bottom: 4px solid;
+  border-color: var(--navbar-border-color);
+  flex-shrink: 0;
 }
 
-#title{
-    margin-left: 5px;
+#title {
+  font-size: 2rem;
+  font-weight: bold;
+  line-height: 1.2;
+  margin-left: 24px;
+  color: inherit;
+  text-decoration: none;
 }

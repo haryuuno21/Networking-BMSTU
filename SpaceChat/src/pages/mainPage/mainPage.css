@@ -1,3 +1,15 @@
 .page-container{
     display: flex;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap:43px;
+}
+
+.login-form{
+    width: 70vw;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
