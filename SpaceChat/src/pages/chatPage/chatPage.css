@@ -1,5 +1,14 @@
 .chat-container{
     background-color: #ffffff;
     width: 70vw;
-    height: 30vh;
+    height: 60vh;
+    overflow: auto;
+    box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.1);
+}
+
+.message-form{
+    width: 70vw;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }

@@ -14,7 +14,7 @@ const messagesSlice = createSlice({
     },
 
     addMessage(state, { payload }) {
-      state.messages.concat(payload);
+      state.messages = [...state.messages, payload];
     },
 
     clearMessages(state) {
@@ -24,7 +24,7 @@ const messagesSlice = createSlice({
 });
 
 export const useMessages = () =>
-  useSelector((state: RootState) => state.user.login);
+  useSelector((state: RootState) => state.messages.messages);
 
 export const {
   setMessages: setMessagesAciton,

@@ -67,7 +67,7 @@ const createWebSocket = (url: string, dispatch: AppDispatch) => {
 
     console.log("Message from server:", message);
 
-    // сеттим сообщение в массив
+    // добавляем сообщение в массив
     dispatch(addMessageAciton(message));
   };
   // обработчик на закрытие

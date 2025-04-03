@@ -5,6 +5,7 @@ export interface Message {
     data?: string
     send_time?: string
     error?: string
+    self?: boolean
   }
   
 export type Users = Record<string, Array<{

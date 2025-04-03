@@ -2,12 +2,17 @@ import { createSlice } from "@reduxjs/toolkit";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 
+interface State {
+  login: string;
+  ws?: WebSocket;
+}
+
 const userSlice = createSlice({
   name: "user",
-  initialState: {
+  initialState:  {
     login: "",
     ws: undefined,
-  },
+  } as State,
   reducers: {
     setLogin(state, { payload }) {
       state.login = payload;
