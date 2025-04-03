@@ -2,7 +2,7 @@ import express from 'express'
 import axios from 'axios'
 import http from 'http'
 import * as ws from "ws";
-import { HOST_NAME, PORT } from './index.constants';
+import { HOST_NAME, PORT } from '../index.constants'
 import { Users } from './index.types';
 
 const app = express(); // создание экземпляра приложения express

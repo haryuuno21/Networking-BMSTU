@@ -6,7 +6,7 @@ import { ThemeProvider } from "@emotion/react";
 import theme from "./themeProvider";
 import ROUTES from "./routes";
 import { Provider } from "react-redux";
-import store from "./store";
+import { store } from "./store/store";
 import { MarsChatPage } from "./pages/marsChatPage/marsChatPage";
 
 function App() {
