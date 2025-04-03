@@ -1,1 +1,5 @@
 SpaceChat/package-lock.json
+/WebSocketServers/node_modules
+WebSocketServers/package-lock.json
+/WebSocketSever/node_modules
+WebSocketSever/package-lock.json
