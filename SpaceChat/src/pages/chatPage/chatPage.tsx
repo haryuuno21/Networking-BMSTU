@@ -33,7 +33,7 @@ export const ChatPage: FC = () => {
         username: login,
         send_time: new Date().toISOString(),
         self: true,
-        data: messageData,
+        payload: messageData,
       };
       const msgJSON = JSON.stringify(message);
       ws.send(msgJSON);
@@ -48,18 +48,28 @@ export const ChatPage: FC = () => {
           <MessageCard key={index} message={message} />
         ))}
       </div>
-      <form onSubmit={onSubmit} className="message-form">
-        <TextField
-          value={messageData}
-          onChange={(e) => setMessageData(e.target.value)}
-          variant="outlined"
-          size="medium"
-          label="Сообщение"
-        ></TextField>
-        <Button type="submit" size="large" color="primary" variant="contained">
-          Отправить
-        </Button>
-      </form>
+      {import.meta.env.VITE_IS_MARS ? (
+        <></>
+      ) : (
+        <form onSubmit={onSubmit} className="message-form">
+          <TextField
+            value={messageData}
+            onChange={(e) => setMessageData(e.target.value)}
+            variant="outlined"
+            size="medium"
+            label="Сообщение"
+          ></TextField>
+
+          <Button
+            type="submit"
+            size="large"
+            color="primary"
+            variant="contained"
+          >
+            Отправить
+          </Button>
+        </form>
+      )}
     </div>
   );
 };

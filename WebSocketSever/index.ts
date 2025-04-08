@@ -2,14 +2,31 @@ import express from "express";
 import axios from "axios";
 import http from "http";
 import * as ws from "ws";
-import { HOST_NAME, PORT } from "../index.constants";
+import {
+  HOST_NAME,
+  TRANSPORT_HOST_NAME,
+  TRANSPORT_PORT,
+} from "../index.constants";
 import { Message, Users } from "./index.types";
+
+const PORT = parseInt(process.env.PORT || "8000");
 
 const app = express(); // создание экземпляра приложения express
 const server = http.createServer(app); // создание HTTP-сервера
 
 // Используйте express.json() для парсинга JSON тела запроса
 app.use(express.json());
+
+if (process.env.PLANET === "MARS") {
+  app.post(
+    "/receive",
+    (req: { body: Message }, res: { sendStatus: (arg0: number) => void }) => {
+      const message: Message = req.body;
+      sendMessageToOtherUsers("", message);
+      res.sendStatus(200);
+    }
+  );
+}
 
 // запуск сервера приложения
 server.listen(PORT, HOST_NAME, () => {
@@ -50,9 +67,10 @@ wss.on("connection", (websocketConnection: ws.WebSocket, req: Request) => {
     console.log("[message] Received from " + username + ": " + messageString);
 
     const message: Message = JSON.parse(messageString);
-    message.self = false;
+    message.self = undefined;
     message.username = message.username ?? username;
     sendMessageToOtherUsers(message.username, message);
+    sendMessageToTransport(message);
   });
 
   // обработчик на закрытие
@@ -74,3 +92,10 @@ function sendMessageToOtherUsers(username: string, message: Message): void {
     }
   }
 }
+
+const sendMessageToTransport = (message: Message): Promise<void> => {
+  return axios.post(
+    `http://${TRANSPORT_HOST_NAME}:${TRANSPORT_PORT}/send`,
+    message
+  );
+};

@@ -1,8 +1,8 @@
 export interface Message {
   id?: number;
   username: string;
-  data?: string;
+  payload?: string;
   send_time?: string;
-  error?: string;
+  has_error?: boolean;
   self?: boolean;
 }

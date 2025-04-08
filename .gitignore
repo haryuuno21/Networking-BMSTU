@@ -3,3 +3,5 @@ SpaceChat/package-lock.json
 WebSocketServers/package-lock.json
 /WebSocketSever/node_modules
 WebSocketSever/package-lock.json
+/TransportImitation/node_modules
+TransportImitation/package-lock.json

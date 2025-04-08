@@ -1,4 +1,3 @@
-import * as ws from "ws";
 export interface Message {
     id?: number
     username: string
@@ -7,8 +6,3 @@ export interface Message {
     has_error?: boolean
     self?: boolean
   }
-  
-export type Users = Record<string, Array<{
-  id: number
-  ws: ws.WebSocket
-}>>
