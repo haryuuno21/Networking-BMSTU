@@ -1,0 +1,57 @@
+.message-card-container {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding: 12px;
+    border: 1px solid #c4c4c4; /* Серый контур */
+    border-radius: 4px;
+    background-color: white;
+    margin: 36px;
+    height: auto; /* Обеспечиваем авто-рост по высоте */
+    opacity: 0; /* Изначально карточка невидима */
+    animation: fadeIn 0.5s ease-out forwards; /* Анимация появления */
+  }
+  
+  @keyframes fadeIn {
+    0% {
+      opacity: 0; /* Начальная невидимость */
+      transform: translateY(20px); /* Начинаем немного снизу */
+    }
+    100% {
+      opacity: 1; /* Полная видимость */
+      transform: translateY(0); /* Возвращаем в исходное положение */
+    }
+  }
+  
+  .message-card-container.self {
+    background-color: #ebedff;
+    border: 1px solid rgba(0, 51, 255, 0.54);
+  }
+  .message-card-container.error {
+    background-color: #ffb0b0;
+    border: 1px solid rgba(255, 0, 0, 0.54);
+  }
+  
+  .message-label {
+    position: absolute;
+    top: -8px;
+    left: 12px;
+    background: white;
+    padding: 0 4px;
+    font-size: 12px;
+    color: #666;
+  }
+  
+  .message-label.self {
+    background: linear-gradient(to bottom, #ffffff 40%, #ebedff 45%);
+  }
+  
+  .message-content {
+    font-size: 16px;
+    color: #333;
+    padding-top: 6px;
+    word-wrap: break-word;
+    white-space: normal;
+    overflow-wrap: break-word;
+  }
+  

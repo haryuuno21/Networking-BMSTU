@@ -1,0 +1,21 @@
+nav {
+  display: flex;
+  align-items: center;
+  height: 64px;
+  background-color: var(--navbar-bg-color);
+  border-bottom: 4px solid;
+  border-color: var(--navbar-border-color);
+  flex-shrink: 0;
+  justify-content: space-between;
+}
+
+#title {
+  margin-left: 24px;
+}
+
+.user-exit-wrap{
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  margin-right: 24px;
+}
