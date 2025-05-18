@@ -1,120 +1,127 @@
 import numpy as np
 import json
+import math as math
+from typing import Dict
+import random
 
-syndrome_to_error = {
-    (0, 0, 1): (0, 0, 0, 0, 0, 0, 1),
-    (0, 1, 0): (0, 0, 0, 0, 0, 1, 0),
-    (1, 0, 0): (0, 0, 0, 0, 1, 0, 0),
-    (0, 1, 1): (0, 0, 0, 1, 0, 0, 0),
-    (1, 1, 0): (0, 0, 1, 0, 0, 0, 0),
-    (1, 1, 1): (0, 1, 0, 0, 0, 0, 0),
-    (1, 0, 1): (1, 0, 0, 0, 0, 0, 0),
+perevod: Dict[int, int] = {
+    1: 0b1,
+    2: 0b10,
+    4: 0b100,
+    8: 0b1000,
+    3: 0b10000,
+    6: 0b100000,
+    12: 0b1000000,
+    11: 0b10000000,
+    5: 0b100000000,
+    10: 0b1000000000,
+    7: 0b10000000000,
+    14: 0b100000000000,
+    15: 0b1000000000000,
+    13: 0b10000000000000,
+    9: 0b100000000000000
 }
 
-N = 7
-K = 4
-gx = np.array([1, 0, 1, 1])  # Образующий полином x**3 + x + 1
-mx = np.array([0, 0, 0, 1])  # Полином информационного вектора
-
-
-def gf2_division(dividend, divisor):
-    temp_div = np.copy(dividend)
-    deg_diff = len(temp_div) - len(divisor)
-
-    while deg_diff >= 0:
-        temp_div[: len(divisor)] ^= divisor
-        temp_div = np.trim_zeros(temp_div, trim="f")
-        deg_diff = len(temp_div) - len(divisor)
-
-    return temp_div
-
-
-def code(message):
-    mx = np.concatenate((mx, np.array([0 for _ in range(N - K)])))
-
-    px = gf2_division(mx, gx)
-    px = np.pad(px, (N - len(px), 0))
-
-    vx = mx ^ px
-    pass
-
-
-
-def make_data(data, SEGMENT_SIZE=100):
-    """
-    Преобразует данные в битовый поток, разбивает на 11-битные блоки,
-    кодирует их в [15, 11] циклический код и возвращает 7-битные сегменты.
+def bin_to_dec(string):
+    return int(string, 2)
     
-    Параметры:
-        data: входные данные (любой JSON-сериализуемый объект)
-        use_cyclic_code: если True — применяет циклический код [15, 11], иначе — код Хэмминга
-        SEGMENT_SIZE: размер сегмента в байтах перед кодированием (по умолчанию 100)
-    
-    Возвращает:
-        Список 7-битных строк (последняя может быть короче)
-    """
-    # 1. Преобразуем данные в битовую строку
-    json_str = json.dumps(data)
-    byte_data = bytearray(json_str, 'utf-8')
-    bit_stream = ''.join(bin(byte)[2:].zfill(8) for byte in byte_data)
+def division(delymoe):
+    delytel = bin_to_dec("10011")
+    difference = 1
+    while(difference >= 0):
+        difference = bin(delymoe).__len__() - bin(delytel).__len__()
+        if difference>0:
+            delymoe = delymoe ^ (delytel<<difference)
+        else:
+            delymoe = delymoe ^ delytel
+        difference = bin(delymoe).__len__() - bin(delytel).__len__()
+    return delymoe
 
-    # 2. Разбиваем на сегменты по `SEGMENT_SIZE` байт (как в исходной функции)
-    segments = [
-        bit_stream[i * SEGMENT_SIZE * 8 : (i + 1) * SEGMENT_SIZE * 8]
-        for i in range((len(bit_stream) + SEGMENT_SIZE * 8 - 1) // (SEGMENT_SIZE * 8))
-    ]
+def make_data(message):
 
-    # 3. Разбиваем каждый сегмент на 11-битные блоки (дополняем последний нулями)
-    encoded_bits = []
-    for segment in segments:
-        # Дополняем сегмент нулями, чтобы длина делилась на 11
-        padded_segment = segment.ljust(((len(segment) + 10) // 11) * 11, '0')
+    message = json.dumps(message, separators=(',', ':'), indent=None)
+    binary_str = ''.join(format(ord(char), '08b') for char in message)
+
+    chunk_size = 11
+    chunks = [binary_str[i:i+chunk_size] for i in range(0, len(binary_str), chunk_size)]
+    kot = ''
+    if len(chunks[-1]) < chunk_size:
+        kot = len(chunks[-1])
+        chunks[-1] = chunks[-1].ljust(chunk_size, '0')
+    coded_blocks = [code(chunk) for chunk in chunks]
+    return(kot, coded_blocks)
+
+def code(massage):
+    a = massage
+    b = bin_to_dec(a)
+    b = b << 4
+    ostatok = division(b)
+    b = b | ostatok
+    return bin(b)[2:]
+
+def make_mistake(coded_blocks):
+    chance = 0.09  # Вероятность ошибки (100%)
+    if random.random() <= chance:
+        block = random.randint(0, len(coded_blocks)-1)
+        bit = random.randint(0, len(coded_blocks[block])-1)
         
-        # Разбиваем на 11-битные блоки
-        blocks_11bit = [padded_segment[i:i+11] for i in range(0, len(padded_segment), 11)]
+        # Преобразуем строку в список (чтобы можно было менять символы)
+        block_list = list(coded_blocks[block])
         
-        # Кодируем каждый блок в 15 бит
-        for block in blocks_11bit:
-            encoded_block = cyclic_code_15_11_encode(block)  # Реализация ниже            
-            encoded_bits.append(encoded_block)
+        # Инвертируем выбранный бит
+        if block_list[bit] == '1':
+            block_list[bit] = '0'
+        else:
+            block_list[bit] = '1'
+        
+        # Собираем обратно в строку
+        coded_blocks[block] = ''.join(block_list)
+    
+    return coded_blocks
 
-    # 4. Объединяем все биты и разбиваем на 7-битные части
-    final_bit_stream = ''.join(encoded_bits)
-    return [final_bit_stream[i:i+7] for i in range(0, len(final_bit_stream), 7)]
-
-
-def cyclic_code_15_11_encode(data_11bit):
-    """
-    Кодирует 11-битные данные в 15-битный циклический код.
-    Предполагается, что используется CRC-код с порождающим многочленом x⁴ + x + 1 (стандартный для [15,11]).
-    """
-    if len(data_11bit) != 11:
-        raise ValueError("Данные должны быть ровно 11 бит!")
+def make_decryption(coded_blocks, kot):
+    if random.random() < 0.01:
+        print('random error')
+        raise Exception('random error')
+    decoded_blocks = []
     
-    # Преобразуем строку битов в полином (например, "1101" → x³ + x² + 1)
-    data_poly = int(data_11bit, 2)
+    for block in coded_blocks:
+        # Проверяем длину блока (должна быть 15 бит)
+        if len(block) < 15:
+            block = block.zfill(15)
+        
+        # Исправление ошибки
+        syndrome = division(bin_to_dec(block))
+        if syndrome != 0:
+            errorbytable = perevod.get(syndrome, 0)
+            block_dec = bin_to_dec(block)
+            block_dec = block_dec ^ errorbytable
+            block = bin(block_dec)[2:].zfill(15)
+        
+        # Удаление контрольных битов (оставляем первые 11 бит)
+        info_bits = block[:11]
+        decoded_blocks.append(info_bits)
     
-    # Умножаем на x⁴ (сдвигаем на 4 бита влево)
-    shifted_poly = data_poly << 4
+    # Объединяем все биты в одну строку
+    full_binary_str = ''.join(decoded_blocks)
     
-    # Делим на порождающий полином x⁴ + x + 1 (10011 в бинарном виде)
-    generator = 0b10011  # x⁴ + x + 1
-    remainder = shifted_poly
-    for _ in range(11):
-        if remainder & (1 << 14):  # Если старший бит (x¹⁴) установлен
-            remainder ^= (generator << 10)  # Вычитаем генератор (умноженный на x¹⁰)
-        remainder <<= 1
+    # Удаляем добавленные нули (если они были)
+    if kot and isinstance(kot, int):
+        full_binary_str = full_binary_str[:-(11 - kot)]
     
-    remainder >>= 11  # Убираем лишние сдвиги
+    # Разбиваем на байты (по 8 бит) и преобразуем в строку
+    message_bytes = [full_binary_str[i:i+8] for i in range(0, len(full_binary_str), 8)]
     
-    # Закодированный блок: (data_11bit << 4) | remainder
-    encoded_block = (data_poly << 4) | (remainder >> 1)
+    # Удаляем последний байт, если он неполный (может появиться из-за удаления доп. нулей)
+    if len(message_bytes[-1]) < 8:
+        message_bytes = message_bytes[:-1]
     
-    # Возвращаем 15-битную строку
-    return bin(encoded_block)[2:].zfill(15)
-
-
-# Пример использования:
-data = {"key": "value", "num": 12345}
-encoded_segments = make_data(data, use_cyclic_code=True)
-print(encoded_segments)
+    message = ''.join([chr(int(byte, 2)) for byte in message_bytes if byte])
+    
+    # Преобразуем JSON обратно в объект Python
+    try:
+        return json.loads(message)
+    except json.JSONDecodeError as e:
+        print(f"Ошибка декодирования JSON: {e}")
+        print(f"Полученная строка: {message}")
+        return None
