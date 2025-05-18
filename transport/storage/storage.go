@@ -66,7 +66,7 @@ func ScanStorage(sender sendFunc) {
 				Username: message.Username,
 				Text:     getMessageText(sendTime), // склейка сообщения
 				SendTime: sendTime,
-				Error:    "",
+				Error:    false,
 			}
 			fmt.Printf("sent message: %+v\n", payload)
 			go sender(payload)        // запускаем горутину с отправкой на прикладной уровень, не будем дожидаться результата ее выполнения
@@ -76,7 +76,7 @@ func ScanStorage(sender sendFunc) {
 				Username: message.Username,
 				Text:     "",
 				SendTime: sendTime,
-				Error:    consts.SegmentLostError, // ошибка
+				Error:    true, // ошибка
 			}
 			fmt.Printf("sent error: %+v\n", payload)
 			go sender(payload)        // запускаем горутину с отправкой на прикладной уровень, не будем дожидаться результата ее выполнения

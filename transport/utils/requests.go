@@ -20,7 +20,7 @@ type Segment struct {
 type SendRequest struct {
     Id       int       `json:"id,omitempty"`
     Username string    `json:"username"`
-    Text     string    `json:"data"`
+    Text     string    `json:"payload"`
     SendTime time.Time `json:"send_time"`
 }
 
@@ -35,9 +35,9 @@ type Message struct {
 // структура тела запроса на прикладной уровень
 type ReceiveRequest struct {
     Username string    `json:"username"`
-    Text     string    `json:"data"`
+    Text     string    `json:"payload"`
     SendTime time.Time `json:"send_time"`
-    Error    string    `json:"error"`
+    Error    bool    `json:"has_error"`
 }
 
 func SplitMessage(payload string, segmentSize int) []string {
