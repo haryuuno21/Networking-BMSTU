@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port 3000",
-    "dev:mars": "vite --mode mars --port 3010",
+    "dev": "vite --port 3000 --host",
+    "dev:mars": "vite --mode mars --port 3010 --host",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"

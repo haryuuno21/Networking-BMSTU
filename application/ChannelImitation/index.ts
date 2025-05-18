@@ -11,10 +11,9 @@ export interface Message {
   self?: boolean;
 }
 
-const PORT = 8020;
-const MARS = 8010;
-const CHANNEL_PORT = 8030;
+const PORT = 8030;
 const HOST = "127.0.0.1";
+const TRANSPORT_PORT = 8020;
 const app = express(); // создание экземпляра приложения express
 const server = http.createServer(app); // создание HTTP-сервера
 
@@ -22,19 +21,10 @@ const server = http.createServer(app); // создание HTTP-сервера
 app.use(express.json());
 
 app.post(
-  "/send",
+  "/code",
   (req: { body: Message }, res: { sendStatus: (arg0: number) => void }) => {
     const message: Message = req.body;
-    codeMessage(message);
-    res.sendStatus(200);
-  },
-);
-
-app.post(
-  "/transfer",
-  (req: { body: Message }, res: { sendStatus: (arg0: number) => void }) => {
-    const message: Message = req.body;
-    sendMessageToMars(message);
+    sendBack(message).catch(() => {});
     res.sendStatus(200);
   },
 );
@@ -44,10 +34,6 @@ server.listen(PORT, HOST, () => {
   console.log(`Server started at http://${HOST}:${PORT}`);
 });
 
-const sendMessageToMars = (message: Message): Promise<void> => {
-  return axios.post(`http://${HOST}:${MARS}/receive`, message);
-};
-
-const codeMessage = (message: Message): Promise<void> => {
-  return axios.post(`http://${HOST}:${CHANNEL_PORT}/code`, message);
+const sendBack = (message: Message): Promise<void> => {
+  return axios.post(`http://${HOST}:${TRANSPORT_PORT}/transfer/`, message);
 };
